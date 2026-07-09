@@ -1,0 +1,74 @@
+# Configuration file
+# Set mode=portfolio or mode=cec2017 to choose the experiment.
+mode=portfolio
+
+# Common parameters
+seed=42
+num_runs=50
+
+# =============================================================================
+# PORTFOLIO parameters (mode=portfolio)
+# =============================================================================
+max_evals=10000
+lambda=500.0
+ls_ratio=0.4
+data_folder=./datos_portfolio_2526/
+
+# Genetic / Memetic algorithm parameters
+ga_pop_size=100
+agg_pc=0.8
+ga_pm=0.1
+ga_tourney_k=3
+ma_bl_ratio=0.15
+ma_bl_maxevals=100
+ma_gen_period=10
+ma_rand_prob=0.1
+ma_top_ratio=0.1
+
+# Simulated Annealing (ES) parameters
+es_mu=0.2
+es_phi=0.3
+es_tf=0.001
+
+# BMB parameters
+bmb_restarts=5
+bmb_evals_per_restart=2000
+
+# ILS parameters
+ils_mut_ratio=0.2
+ils_num_iters=5
+ils_evals_per_iter=2000
+
+# BBO shared parameters (used by BBOImproved in both modes)
+bbo_elitism=2
+bbo_imp_sigma=0.1
+
+# BBOLocalSearch parameters (portfolio only)
+bbo_ls_ratio=0.4
+bbo_ls_every=5
+bbo_ls_maxevals=200
+
+# BBOSolisWets parameters (portfolio only)
+sw_delta=0.2
+sw_every=5
+sw_max_evals=200
+
+# Datasets (format: train_file,test_file,min_weight,max_weight)
+dataset=ibex_35.csv,ibex_35_2025.csv,0.005,0.08
+dataset=syp_100.csv,syp_100_2025.csv,0.005,0.05
+dataset=syp_500.csv,syp_500_2025.csv,0.005,0.02
+
+# =============================================================================
+# CEC2017 parameters (mode=cec2017)
+# =============================================================================
+# BBOImproved population size and mutation rate
+bbo_pop_size=50
+bbo_mutation=0.01
+
+# Domain bound: search space is [-cec_bound, cec_bound]^D (standard CEC2017 = 100)
+cec_bound=100.0
+
+# Functions 1-30
+cec_funcs=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
+cec_dims=10,30,50
+cec_runs=10

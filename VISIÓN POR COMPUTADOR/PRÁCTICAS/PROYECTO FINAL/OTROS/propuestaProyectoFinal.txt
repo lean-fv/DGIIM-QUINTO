@@ -1,0 +1,21 @@
+a) Nombre de los participantes:
+
+Antonio Cantillo Molina
+Jaime Corzo Galdó
+Leandro Jorge Fernández Vega (Portavoz)
+Mario Líndez Martínez
+
+b) Titulo del proyecto:
+
+Skin Cancer Detection with Deep Learning.
+
+c) Muy breve descripción del proyecto:
+
+Se pretende entrenar modelos de detección de cánceres de piel mediante imágenes. Adicional al trabajo que ya hay realizado, se propone la comparación de los modelos entrenados para escoger el que proporcione mejores resultados. Entre los modelos posibles, se incluyen Transformers, Variational Autoencoders, etc.
+
+d) Base de datos de imágenes que se usará (nombre y URL):
+
+Melanoma Detection Dataset
+Author: Pablo López Santori
+
+https://www.kaggle.com/datasets/wanderdust/skin-lesion-analysis-toward-melanoma-detection

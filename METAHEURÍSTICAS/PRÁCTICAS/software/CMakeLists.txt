@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.10)
+
+PROJECT(mh_p1 CXX C)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
+file(GLOB CPP_SOURCES "src/*.cpp")
+include_directories("./src/common" "./src/inc")
+
+set(CEC2017_SOURCES
+    "src/cec17.c"
+    "src/cec17_test_func.c"
+)
+
+add_executable(main "./src/main.cpp" ${CPP_SOURCES} ${CEC2017_SOURCES})
+
+#include(FetchContent)
+# FetchContent_Declare(
+#   googletest
+#   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+# )
+# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# FetchContent_MakeAvailable(googletest)
+
+# enable_testing()
+
+# file(GLOB TEST "test/*.cpp")
+# add_executable(all_test ${TEST})
+# target_link_libraries(all_test GTest::gtest_main)
+
+# gtest_discover_tests(all_test)

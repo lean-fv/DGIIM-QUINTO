@@ -1,0 +1,50 @@
+LEEME
+
+Resumen breve y ordenado de los ficheros en este directorio (software/src)
+
+Archivos principales (raíz de src/):
+- main.cpp: Punto de entrada del programa. Soporta dos modos de operación: mode=portfolio (optimización de carteras con 18 algoritmos) y mode=cec2017 (benchmark CEC2017 con BBOImproved). Parsea la configuración, lanza las metaheurísticas y guarda los resultados experimentales.
+- portfolio.cpp: Implementación de la lógica específica del problema financiero (cálculo de retornos, matriz de covarianzas, riesgo y función fitness).
+- greedy.cpp: Implementación de la metaheurística constructiva Greedy para la generación rápida de soluciones iniciales.
+- cec17.c: Wrapper C de la suite CEC2017. Gestiona la inicialización (cec17_init), la evaluación de fitness (cec17_fitness), el cálculo de error (cec17_error) y la configuración del directorio de datos auxiliares (cec17_set_base_dir). Lleva la cuenta de evaluaciones y genera ficheros de resultados por milestones.
+- cec17_test_func.c: Implementación original en C de las 30 funciones de prueba CEC2017 (Noor Awad, 2013). Contiene las funciones base (sphere, ellips, rosenbrock, rastrigin, etc.), las transformaciones (rotación, desplazamiento) y la composición/hibridación de funciones. Lee las matrices de rotación y vectores de desplazamiento desde input_data/.
+- LEEME: Este mismo archivo, guía de lectura del código fuente.
+
+Directorio common/ (utilidades y estructuras base del framework):
+- problem.h: Clase base abstracta que define la interfaz general para cualquier problema de optimización.
+- solution.h: Representación de las soluciones y operaciones básicas sobre los vectores de pesos.
+- mh.h: Declaraciones base de estructuras y clases abstractas para las metaheurísticas.
+- mhtrayectory.h: Gestión de trayectorias, logs y seguimientos de ejecución.
+- random.hpp: Utilidades de generación aleatoria y control de semillas.
+- util.h: Funciones auxiliares genéricas (parsing de CSVs, cálculos estadísticos, I/O).
+
+Directorio inc/ (cabeceras específicas de la práctica):
+- portfolio.h: Definición de la clase ProblemPortfolio (hereda de Problem). Encapsula los datos históricos, la función fitness y los operadores fix/createSolution del problema de cartera.
+- cec2017problem.h: Definición de la clase ProblemCEC2017 (hereda de Problem<double>). Envuelve la suite de benchmark CEC2017 (F1-F30) como problema de maximización. Incluye buffer reutilizable para evitar asignaciones en cada evaluación.
+- cec17.h: Cabecera de la librería C del CEC2017 (funciones cec17_init, cec17_fitness, cec17_error, cec17_set_base_dir).
+- greedy.h: Cabecera del algoritmo constructivo determinista.
+- randomsearch.h: Implementación de la Búsqueda Aleatoria pura (baseline del experimento).
+- localsearch.h: Implementación de la Búsqueda Local con operador de transferencia de capital.
+- geneticalgorithm.h: Clase base abstracta GeneticAlgorithm<tDomain>. Proporciona los operadores compartidos de todos los GAs: selección por torneo, cruce aritmético, cruce BLX-α, mutación por intercambio y gestión de la población. Los operadores no reciben Problem; el caller es responsable de llamar a fix().
+- generational_ga.h: Algoritmo Genético Generacional con elitismo (AGG). Implementa optimize() con reemplazo total de la población, cruce de pares consecutivos y preservación del mejor individuo.
+- steadystate_ga.h: Algoritmo Genético de Estado Estacionario (AGE). Implementa optimize() generando dos descendientes por iteración y reemplazando al peor individuo solo si el descendiente es estrictamente mejor.
+- memetic.h: Algoritmos Meméticos (AM). Contiene la clase base MemeticBase<tDomain> (bucle AGG más fase BL periódica) y tres especializaciones concretas: AM_All_T (BL a todos), AM_Rand_T (BL con prob. 0.1) y AM_Best_T (BL al 10% mejor).
+- simulatedannealing.h: Metaheurística de Enfriamiento Simulado (SA). Parte de una solución dada y explora el vecindario mediante el mismo operador de transferencia de LocalSearch. Acepta regresiones siguiendo el criterio de Boltzmann (exp(-Δ/T)); usa un esquema de enfriamiento de Cauchy modificado. Parámetros configurables: ratio de transferencia, mu, phi y temperatura final Tf.
+- bmb.h: Búsqueda Multiarranque Básica (BMB). Genera `restarts` soluciones aleatorias independientes y optimiza cada una con LocalSearch (hasta `evals_per_restart` evaluaciones). Devuelve la mejor solución encontrada entre todos los reinicios.
+- ils.h: Búsqueda Local Iterada (ILS). Contiene la clase base abstracta ILSBase<tDomain> (framework ILS común: solución inicial aleatoria + bucle mutación/optimización) y dos especializaciones: ILS_BL (optimizador interno = LocalSearch) e ILS_ES (optimizador interno = SimulatedAnnealing). El operador de mutación permuta aleatoriamente una fracción `mut_ratio` de posiciones de la solución y llama a problem.fix().
+- bbo.h: Clase base BBO<tDomain> (Biogeography-Based Optimization). Implementa el bucle generacional con migración, mutación uniforme, ordenación y hook afterGeneration(). Los operadores migratePopulation(), mutatePopulation() y getProcessCount() son virtuales, permitiendo que las subclases (BBOImproved) redefinan la estrategia sin duplicar el bucle principal.
+- bbo_improved.h: BBOImproved<tDomain>. Redefine getProcessCount() para excluir hábitats élite, migratePopulation() con migración combinada BLX-style, y mutatePopulation() con perturbación gaussiana. No sobreescribe optimize(); hereda el bucle completo de BBO.
+- bbo_local_search.h: BBOLocalSearch<tDomain>. Variante memética que aplica Búsqueda Local (transferencia de capital) al mejor hábitat cada ls_every generaciones mediante el hook afterGeneration(). Específica para el problema del Portfolio.
+- bbo_solis_wets.h: BBOSolisWets<tDomain>. Variante memética que aplica la búsqueda local Solis-Wets al mejor hábitat cada sw_every generaciones. Agnóstica al dominio: aplicable tanto al Portfolio como al CEC2017.
+- soliswets.h: Implementación del algoritmo de búsqueda local Solis-Wets. Perturbaciones aleatorias con memoria de dirección (vector de sesgo) y tamaño de paso adaptativo (se duplica tras 5 éxitos, se reduce a la mitad tras 3 fallos).
+
+Directorio others/ (scripts y herramientas auxiliares):
+- dataset_processing.ipynb: Notebook interactivo para el preprocesado y limpieza de los históricos de bolsa originales.
+- generate_boxplot.py: Script en Python para la automatización de gráficas de dispersión (boxplots) a partir de los resultados de /results.
+- extract.py: Script que itera todos los subdirectorios de algoritmos en results_cec17/, lee los ficheros .txt de resultados y genera resúmenes Excel por dimensión (results_cec2017_D.xlsx) con errores medios por milestone y función.
+- draw_errors.py: Script que genera gráficas de convergencia de error (PNG) a partir de los Excel de milestones en results_cec17/. Acepta --funcs para filtrar funciones específicas (e.g. --funcs 4,5,21).
+- requirements.txt: Lista de dependencias de Python (pandas, seaborn, matplotlib, openpyxl) necesarias para ejecutar los scripts.
+- tiempos.cc: Código fuente auxiliar utilizado para pruebas aisladas de rendimiento y benchmarking.
+
+Notas:
+- Esta reseña es intencionalmente breve para ofrecer un mapa visual rápido. Todos los detalles de implementación, firmas de funciones y variables están debidamente comentados en formato Doxygen dentro de cada archivo fuente.

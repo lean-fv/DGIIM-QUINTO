@@ -1,0 +1,8 @@
+pandas
+seaborn
+jupyter
+notebook
+ipykernel
+markitdown[pdf]
+openpyxl
+matplotlib
